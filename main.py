@@ -1,9 +1,27 @@
+import os
 
-with open('2.txt.webloc', 'r') as txtb:
-    ua = [row.rstrip() for row in txtb]
-with open('1.txt.webloc', 'r') as txta:
-    ips = [row.rstrip() for row in txta]
-with open('3.txt.webloc', 'r') as txtc:
-    ref = [row.rstrip() for row in txtc]
+def create_combined_list(directory):
+    file_list = os.listdir(directory)
+    combined_list = []
 
-print(ua, ips, ref, end="")
+    for file in file_list:
+        with open(directory + "/" + file) as cur_file:
+            combined_list.append([file, 0, []])
+            for line in cur_file:
+                combined_list[-1][2].append(line.strip())
+                combined_list[-1][1] += 1
+
+    return sorted(combined_list, key=lambda x: x[2], reverse=True)
+
+
+def create_file_from_directory(directory, filename):
+    with open(filename + '.txt', 'w+') as newfile:
+        for file in create_combined_list(directory):
+            newfile.write(f'File name: {file[0]}\n')
+            newfile.write(f'Length: {file[1]} string(s)\n')
+            for string in file[2]:
+                newfile.write(string + '\n')
+            newfile.write('-------------------\n')
+
+
+create_file_from_directory('text', 'mytext')
